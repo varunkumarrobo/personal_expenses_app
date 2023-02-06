@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../models/transaction.dart';
 
+
+
 class TransactionList extends StatelessWidget {
     const TransactionList(this.transactions,{super.key,});
 
@@ -14,7 +16,19 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300,
-      child: ListView.builder(
+      child:  transactions.isEmpty ? Column(
+        children: [
+          Text('No transactions added yet!',
+          style: Theme.of(context).textTheme.headline6,
+          ),
+          SizedBox(height: 20,),
+          Container(
+            height: 200,
+            child: Image.asset("assets/images/waiting.png",
+            fit: BoxFit.cover,
+            ),),
+        ],
+      ) :ListView.builder(
         itemCount: transactions.length,
         itemBuilder: (ctx,index) {
           return Card(
@@ -27,16 +41,16 @@ class TransactionList extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                         border: Border.all(
-                      color: Colors.purple,
+                      color: Theme.of(context).primaryColor,
                       width: 2,
                     )),
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       '\$${transactions[index].amount.toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Color.fromARGB(245, 155, 39, 176),
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                   ),
@@ -45,16 +59,11 @@ class TransactionList extends StatelessWidget {
                     children: [
                       Text(
                         transactions[index].title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
                         DateFormat('yyyy/MM/dd').format(transactions[index].date),
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: Colors.grey,
                         ),
                       ),
