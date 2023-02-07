@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:personal_expenses_app/widgets/chart.dart';
 
 import 'models/transaction.dart';
+import 'widgets/chart.dart';
 import 'widgets/new_transaction.dart';
 import 'widgets/transaction_list.dart';
 
@@ -55,7 +55,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // String titleInput;
 
   final List<Transaction> _userTransactions = [
     // Transaction(
@@ -79,12 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(String txTitle, double txAmount, DateTime choosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
       id: DateTime.now().toString(),
-      date: DateTime.now(),
+      date: choosenDate,
     );
 
     setState(() {
@@ -105,8 +104,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _deleteTransaction(String id){
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    print ( _recentTransactions.length);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -114,9 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () {
-              setState(() {
+            
                 _startAddNewTransactions(context);
-              });
+            
             },
             icon: const Icon(Icons.add),
           ),
@@ -129,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Chart(_recentTransactions),
             TransactionList(
               _userTransactions,
+              _deleteTransaction,
             ),
           ],
         ),
@@ -137,9 +144,9 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          setState(() {
+          
             _startAddNewTransactions(context);
-          });
+          
         },
       ),
     );
