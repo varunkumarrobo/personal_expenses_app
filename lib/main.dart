@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 
 import 'models/transaction.dart';
 import 'widgets/chart.dart';
@@ -7,9 +7,12 @@ import 'widgets/new_transaction.dart';
 import 'widgets/transaction_list.dart';
 
 
-
-
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitDown,
+  //   DeviceOrientation.portraitUp,
+  // ]);
   runApp(const MyApp());
 }
 
@@ -34,10 +37,10 @@ class MyApp extends StatelessWidget {
             ),
         appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
-              fontFamily: 'OpenSans',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              ),
+            fontFamily: 'OpenSans',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       home: const MyHomePage(),
@@ -55,7 +58,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final List<Transaction> _userTransactions = [
     // Transaction(
     //   id: "t1",
@@ -71,14 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  List<Transaction> get _recentTransactions{
-    return _userTransactions.where((tx)  {
-      return tx.date.isAfter(DateTime.now()
-      .subtract(const Duration(days: 7),),);
+  bool _showChart = false;
+
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          const Duration(days: 7),
+        ),
+      );
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount, DateTime choosenDate) {
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime choosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -104,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
       _userTransactions.removeWhere((tx) => tx.id == id);
     });
@@ -112,30 +120,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print ( _recentTransactions.length);
+    print(_recentTransactions.length);
+    final appBar = AppBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      title: const Text('Personal Expenses'),
+      actions: [
+        IconButton(
+          onPressed: () {
+            _startAddNewTransactions(context);
+          },
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text('Personal Expenses'),
-        actions: [
-          IconButton(
-            onPressed: () {
-            
-                _startAddNewTransactions(context);
-            
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(
-              _userTransactions,
-              _deleteTransaction,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Show Chart'),
+                Switch(
+                  value: _showChart,
+                   onChanged: (value) {
+                  setState(() {
+                     _showChart = value;
+                  }); 
+                },),
+              ],
+            ),
+            _showChart ? SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.3,
+              child: Chart(_recentTransactions),
+            ):
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.7,
+              child: TransactionList(
+                _userTransactions,
+                _deleteTransaction,
+              ),
             ),
           ],
         ),
@@ -144,9 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          
-            _startAddNewTransactions(context);
-          
+          _startAddNewTransactions(context);
         },
       ),
     );

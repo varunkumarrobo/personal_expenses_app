@@ -1,4 +1,4 @@
-#Tue Feb 07 16:19:23 IST 2023
+#Fri Feb 10 15:01:46 IST 2023
 base.0=/Users/varunkumar/Desktop/personal_expenses_app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

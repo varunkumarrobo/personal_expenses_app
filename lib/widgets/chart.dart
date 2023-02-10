@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_expenses_app/widgets/chart_bar.dart';
+ 
 
 import '../models/transaction.dart';
+import 'chart_bar.dart';
 
 class Chart extends StatelessWidget {
   const Chart(this.recentTransactions, {super.key});
