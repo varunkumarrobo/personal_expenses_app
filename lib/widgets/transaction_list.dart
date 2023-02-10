@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart'; 
+
 
 import '../models/transaction.dart';
+import '../widgets/transaction_list_view.dart'; 
 
 class TransactionList extends StatelessWidget {
   const TransactionList(
@@ -22,7 +23,7 @@ class TransactionList extends StatelessWidget {
               children: [
                 Text(
                   'No transactions added yet!',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(
                   height: 20,
@@ -39,43 +40,15 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (ctx, index) {
-                return Card(
-                  elevation: 5,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 8,
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: FittedBox(
-                          child: Text(
-                              '\$${transactions[index].amount.toStringAsFixed(2)}'),
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      transactions[index].title,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMd().format(transactions[index].date),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {
-                        deleteTx(transactions[index].id);
-                      },
-                      icon: const Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                    ),
-                  ),
-                );
+                return TransactionListView(
+                  transactions: transactions[index],
+                   deleteTx: deleteTx);
               }),
     );
   }
 }
+
+
 
   // Card(
   //             child: Row(
