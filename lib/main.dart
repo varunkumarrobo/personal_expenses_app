@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return  MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
         primarySwatch: Colors.purple,
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: const TextStyle(
+              titleLarge: const TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -120,8 +123,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_recentTransactions.length);
-    final appBar = AppBar(
+    final mediaQuery = MediaQuery.of(context);
+    // print(_recentTransactions.length);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final  PreferredSizeWidget appBar = (Platform.isIOS 
+    ? CupertinoNavigationBar(
+      middle: const Text('Personal Expenses'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => _startAddNewTransactions(context),
+            child: const Icon(CupertinoIcons.add),
+          ),
+      ],
+      ),
+    ) 
+    : AppBar(
       backgroundColor: Theme.of(context).primaryColor,
       title: const Text('Personal Expenses'),
       actions: [
@@ -132,48 +150,69 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: const Icon(Icons.add),
         ),
       ],
-    );
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Show Chart'),
-                Switch(
-                  value: _showChart,
-                   onChanged: (value) {
-                  setState(() {
-                     _showChart = value;
-                  }); 
-                },),
-              ],
-            ),
-            _showChart ? SizedBox(
-              height: (MediaQuery.of(context).size.height -
+    )) as PreferredSizeWidget;
+    final txListWidget = SizedBox(
+              height: (mediaQuery.size.height -
                       appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.3,
-              child: Chart(_recentTransactions),
-            ):
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
+                      mediaQuery.padding.top) *
                   0.7,
               child: TransactionList(
                 _userTransactions,
                 _deleteTransaction,
               ),
-            ),
-          ],
+            );
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if(isLandscape) Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart',style: Theme.of(context).textTheme.titleLarge,),
+                  Switch.adaptive(
+                    activeColor: Theme.of(context).colorScheme.secondary,
+                    value: _showChart,
+                    onChanged: (value) {
+                    setState(() {
+                       _showChart = value;
+                    }); 
+                  },),
+                ],
+              ),
+              if(!isLandscape) SizedBox(
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ), 
+              if(!isLandscape) txListWidget,
+              if (isLandscape) _showChart 
+              ? SizedBox(
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.7,
+                child: Chart(_recentTransactions),
+              )
+              : txListWidget,
+            ],
+          ),
         ),
-      ),
+    );
+    return Platform.isIOS 
+    ? CupertinoPageScaffold(
+      // navigationBar:  appBar,
+      // need to check above comment code again now its showing error..
+      child: pageBody,) 
+    : Scaffold(
+      appBar: appBar,
+      body: pageBody,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: Platform.isIOS 
+      ? Container() 
+      : FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
           _startAddNewTransactions(context);
