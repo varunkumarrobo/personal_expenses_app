@@ -60,7 +60,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
   final List<Transaction> _userTransactions = [
     // Transaction(
     //   id: "t1",
@@ -77,6 +77,25 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   bool _showChart = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state){
+    print(state);
+  }
+
+
+  @override
+  dispose(){
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -121,12 +140,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    // print(_recentTransactions.length);
-    final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final  PreferredSizeWidget appBar = (Platform.isIOS 
+  Widget _buildLandscapeContent(){
+    return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart',style: Theme.of(context).textTheme.titleLarge,),
+                  Switch.adaptive(
+                    activeColor: Theme.of(context).colorScheme.secondary,
+                    value: _showChart,
+                    onChanged: (value) {
+                    setState(() {
+                       _showChart = value;
+                    }); 
+                  },),
+                ],
+              );
+  }
+
+  PreferredSizeWidget _buildAppBarContent(){
+    return (Platform.isIOS 
     ? CupertinoNavigationBar(
       middle: const Text('Personal Expenses'),
       trailing: Row(
@@ -151,6 +183,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     )) as PreferredSizeWidget;
+  }
+
+  // Widget _buildPortraitContent(){}
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    // print(_recentTransactions.length);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final  PreferredSizeWidget appBar = _buildAppBarContent();
     final txListWidget = SizedBox(
               height: (mediaQuery.size.height -
                       appBar.preferredSize.height -
@@ -166,20 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if(isLandscape) Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Show Chart',style: Theme.of(context).textTheme.titleLarge,),
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    value: _showChart,
-                    onChanged: (value) {
-                    setState(() {
-                       _showChart = value;
-                    }); 
-                  },),
-                ],
-              ),
+              if(isLandscape) _buildLandscapeContent(),
               if(!isLandscape) SizedBox(
                 height: (mediaQuery.size.height -
                         appBar.preferredSize.height -
