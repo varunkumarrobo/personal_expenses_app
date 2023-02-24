@@ -44,8 +44,8 @@ class _NewTransactionState extends State<NewTransaction> {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2999),
+      firstDate: DateTime(1600),
+      lastDate: DateTime.now(),
     ).then((pickedDate) {
       if (pickedDate == null) {
         return;
@@ -72,13 +72,23 @@ class _NewTransactionState extends State<NewTransaction> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextField(
-                decoration: const InputDecoration(labelText: 'Title'),
+              TextField( 
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  focusColor: Theme.of(context).primaryColor,
+                  hoverColor:  Theme.of(context).primaryColor,
+                ),
                 controller: _titleController,
                 onSubmitted: (_) => _submitData(),
               ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Amount'),
+              TextField( 
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(  
+                  labelText: 'Amount',
+                  focusColor:Theme.of(context).primaryColor,
+                  hoverColor:  Theme.of(context).primaryColor,
+                ),
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 onSubmitted: (_) => _submitData(),
