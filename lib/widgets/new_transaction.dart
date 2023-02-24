@@ -72,22 +72,22 @@ class _NewTransactionState extends State<NewTransaction> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextField( 
+              TextField(
                 cursorColor: Theme.of(context).primaryColor,
                 decoration: InputDecoration(
                   labelText: 'Title',
                   focusColor: Theme.of(context).primaryColor,
-                  hoverColor:  Theme.of(context).primaryColor,
+                  hoverColor: Theme.of(context).primaryColor,
                 ),
                 controller: _titleController,
                 onSubmitted: (_) => _submitData(),
               ),
-              TextField( 
+              TextField(
                 cursorColor: Theme.of(context).primaryColor,
-                decoration: InputDecoration(  
+                decoration: InputDecoration(
                   labelText: 'Amount',
-                  focusColor:Theme.of(context).primaryColor,
-                  hoverColor:  Theme.of(context).primaryColor,
+                  focusColor: Theme.of(context).primaryColor,
+                  hoverColor: Theme.of(context).primaryColor,
                 ),
                 controller: _amountController,
                 keyboardType: TextInputType.number,
